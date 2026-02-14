@@ -50,4 +50,80 @@
  */
 export function createFestivalManager() {
   // Your code here
+   let festivals = [];
+
+  const validTypes = ["religious", "national", "cultural"];
+
+  function isValidDateString(date) {
+    return (
+      typeof date === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+      !isNaN(new Date(date).getTime())
+    );
+  }
+
+  function addFestival(name, date, type) {
+    if (
+      typeof name !== "string" ||
+      name.trim() === "" ||
+      !isValidDateString(date) ||
+      !validTypes.includes(type)
+    ) {
+      return -1;
+    }
+
+    if (festivals.some((f) => f.name === name)) {
+      return -1;
+    }
+
+    festivals = [
+      ...festivals,
+      { name, date, type }
+    ];
+
+    return festivals.length;
+  }
+
+  function removeFestival(name) {
+    const exists = festivals.some((f) => f.name === name);
+    if (!exists) return false;
+
+    festivals = festivals.filter((f) => f.name !== name);
+    return true;
+  }
+
+  function getAll() {
+    return festivals.map((f) => ({ ...f }));
+  }
+
+  function getByType(type) {
+    return festivals
+      .filter((f) => f.type === type)
+      .map((f) => ({ ...f }));
+  }
+
+  function getUpcoming(currentDate, n = 3) {
+    if (!isValidDateString(currentDate)) return [];
+
+    return festivals
+      .filter((f) => f.date >= currentDate)
+      .slice()
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, n)
+      .map((f) => ({ ...f }));
+  }
+
+  function getCount() {
+    return festivals.length;
+  }
+
+  // 🎁 Public API
+  return {
+    addFestival,
+    removeFestival,
+    getAll,
+    getByType,
+    getUpcoming,
+    getCount,
+  };
 }
