@@ -115,20 +115,22 @@ export function isPalindrome(str) {
 }
 
 export function generatePattern(n) {
- if (typeof n !== "number" || !Number.isInteger(n) || n <= 0) {
+  if (typeof n !== "number" || !Number.isInteger(n) || n <= 0) {
     return [];
   }
 
-  // Base case
-  if (n === 1) return ["*"];
+  // helper function to build ascending part
+  function buildAscending(k) {
+    if (k === 1) return ["*"];
+    const prev = buildAscending(k - 1);
+    return [...prev, repeatChar("*", k)];
+  }
 
-  const prev = generatePattern(n - 1);
+  const ascending = buildAscending(n);
 
-  // Remove last element (which is "*")
-  const middle = prev.slice(0, prev.length - 1);
+  // mirror without last element
+  const descending = ascending.slice(0, -1).reverse();
 
-  const current = repeatChar("*", n);
-
-  return [...middle, current, ...middle.slice().reverse()];
+  return [...ascending, ...descending];
 }
 
